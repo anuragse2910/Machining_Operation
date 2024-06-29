@@ -9,7 +9,7 @@ tools_info = {
                                 'Material Hardness Number[Rockwell]',
                                 'Density [Kg/m³]',
                                 'Poissons Ratio',
-                                'Length[mm] {Rnage : 3 - 30}',
+                                'Length[mm] {Range : 3 - 30}',
                                 'Diameter[mm] {Range : 0 - 18}',
                                 'Tolerance[mm]',
                                 'Surface finish[mm]'],
