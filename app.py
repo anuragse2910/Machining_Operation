@@ -183,7 +183,7 @@ def main():
             # Select tolerance range
             tolerance_range = st.selectbox("Select Tolerance Range:", list(tolerance_to_numeric_range[tool].keys()), key=f"{tool}_tolerance_range")
             numeric_tolerance_range = tolerance_to_numeric_range[tool][tolerance_range]
-            tolerance_value = st.number_input(f"Tolerance[mm] (Range: {numeric_tolerance_range}):", key=f"{tool}_tolerance_value")
+            tolerance_value = st.number_input(f"Tolerance[mm] (Range: {numeric_tolerance_range}):", key=f"{tool}_tolerance_value", format="%.3f")
             
             if not (float(numeric_tolerance_range.split('-')[0]) <= tolerance_value <= float(numeric_tolerance_range.split('-')[1])):
                 st.error(f"Tolerance must be within the range {numeric_tolerance_range}")
@@ -191,7 +191,7 @@ def main():
                 tool_input_data['Tolerance[mm]'] = tolerance_value
                 surface_finish_range = tolerance_to_surface_finish[tool][tolerance_range]
                 st.write(f"Corresponding Surface Finish Range: {surface_finish_range}")
-                surface_finish_value = st.number_input(f"Surface finish[mm] (Range: {surface_finish_range}):", key=f"{tool}_surface_finish_value")
+                surface_finish_value = st.number_input(f"Surface finish[mm] (Range: {surface_finish_range}):", key=f"{tool}_surface_finish_value", format="%.4f")
                 
                 if not (float(surface_finish_range.split('-')[0]) <= surface_finish_value <= float(surface_finish_range.split('-')[1])):
                     st.error(f"Surface finish must be within the range {surface_finish_range}")
