@@ -20,8 +20,8 @@ tools_info = {
                                    'Material Hardness Number[Rockwell]',
                                    'Density [Kg/m³]',
                                    'Poissons Ratio',
-                                   'Length[mm]{Range : 5 - 10.5}',
-                                   'Angle {Range : 25° - 100°}',
+                                   'Length[mm]{Range : 6 - 10}',
+                                   'Angle {Range : 25° - 45°}',
                                    'Tolerance[mm]',
                                    'Surface finish[mm]'],
                 "output_headings": ['End Milling-Rough operation', 'End Milling-Semi finish operation', 'End Milling-Finish operation']},
@@ -146,8 +146,11 @@ tolerance_to_surface_finish = {
 def load_models(tools_info):
     loaded_models = {}
     for tool, info in tools_info.items():
-        with open(info["model_path"], 'rb') as file:
-            loaded_models[tool] = pickle.load(file)
+        try:
+            with open(info["model_path"], 'rb') as file:
+                loaded_models[tool] = pickle.load(file)
+        except Exception as e:
+            st.error(f"Error loading model for {tool}: {e}")
     return loaded_models
 
 # Load models
@@ -155,8 +158,96 @@ loaded_models = load_models(tools_info)
 
 # Function to make predictions for a tool's operation
 def predict_operation(input_data, model):
-    predictions = model.predict(input_data)
-    return predictions
+    try:
+        predictions = model.predict(input_data)
+        return predictions
+    except Exception as e:
+        st.error(f"Prediction error: {e}")
+        return None
+
+# Function to handle input data collection
+def collect_input_data(tool, features):
+    tool_input_data = {}
+    input_valid = True
+    for feature in features:
+        if feature == 'Material Type [Aluminimum Alloy - 1]':
+            tool_input_data[feature] = st.selectbox(f"{feature}:", ['1'], key=f"{tool}_{feature}")
+        elif feature == 'Material Hardness Number[Rockwell]':
+            tool_input_data[feature] = st.selectbox(f"{feature}:", ['35.45'], key=f"{tool}_{feature}")
+        elif feature == 'Density [Kg/m³]':
+            tool_input_data[feature] = st.selectbox(f"{feature}:", ['2870'], key=f"{tool}_{feature}")
+        elif feature == 'Poissons Ratio':
+            tool_input_data[feature] = st.selectbox(f"{feature}:", ['0.26'], key=f"{tool}_{feature}")
+            
+        elif feature == 'Length[mm] {Range : 3 - 30}' and tool == "Boss":
+            value = st.number_input(f"{feature}:", min_value=3.0, max_value=30.0, key=f"{tool}_{feature}")
+            tool_input_data[feature] = value
+        elif feature == 'Diameter[mm] {Range : 0 - 18}' and tool == "Boss":
+            value = st.number_input(f"{feature}:", min_value=0.0, max_value=18.0, key=f"{tool}_{feature}")
+            tool_input_data[feature] = value
+            
+        elif feature == 'Length[mm]{Range : 6 - 10}' and tool == "Chamfer":
+            value = st.number_input(f"{feature}:", min_value=6.0, max_value=10, key=f"{tool}_{feature}")
+            tool_input_data[feature] = value
+        elif feature == 'Angle {Range : 25° - 45°}' and tool == "Chamfer":
+            value = st.number_input(f"{feature}:", min_value=25.0, max_value=45.0, key=f"{tool}_{feature}")
+            tool_input_data[feature] = value
+            
+        elif feature == 'Radius[mm]{Range : 0 - 6}' and tool == "Fillet":
+            value = st.number_input(f"{feature}:", min_value=0.0, max_value=6.0, key=f"{tool}_{feature}")
+            tool_input_data[feature] = value
+            
+        elif feature == 'Diameter[mm]{Range : 0 - 10}' and tool == "Hole":
+            value = st.number_input(f"{feature}:", min_value=0.0, max_value=10.0, key=f"{tool}_{feature}")
+            tool_input_data[feature] = value
+        elif feature == 'Depth[mm]{Range : 0 - 20}' and tool == "Hole":
+            value = st.number_input(f"{feature}:", min_value=0.0, max_value=20.0, key=f"{tool}_{feature}")
+            tool_input_data[feature] = value
+            
+        elif feature == 'Length[mm]{Range : 3 - 80}' and tool == "Pocket":
+            value = st.number_input(f"{feature}:", min_value=3.0, max_value=80.0, key=f"{tool}_{feature}")
+            tool_input_data[feature] = value
+        elif feature == 'Depth[mm]{Range : 0 - 20}' and tool == "Pocket":
+            value = st.number_input(f"{feature}:", min_value=0.0, max_value=20.0, key=f"{tool}_{feature}")
+            tool_input_data[feature] = value
+        elif feature == 'Width[mm]{Range : 3 - 80}' and tool == "Pocket":
+            value = st.number_input(f"{feature}:", min_value=3.0, max_value=80.0, key=f"{tool}_{feature}")
+            tool_input_data[feature] = value
+            
+        elif feature == 'Length[mm]{Range : 10 - 100}' and tool == "Step":
+            value = st.number_input(f"{feature}:", min_value=10.0, max_value=100.0, key=f"{tool}_{feature}")
+            tool_input_data[feature] = value
+        elif feature == 'Depth[mm]{Range : 6 - 10}' and tool == "Step":
+            value = st.number_input(f"{feature}:", min_value=6.0, max_value=10.0, key=f"{tool}_{feature}")
+            tool_input_data[feature] = value
+        elif feature == 'Width[mm]{Range : 10 - 100}' and tool == "Step":
+            value = st.number_input(f"{feature}:", min_value=10.0, max_value=100.0, key=f"{tool}_{feature}")
+            tool_input_data[feature] = value
+            
+        elif feature not in ['Tolerance[mm]', 'Surface finish[mm]']:
+            tool_input_data[feature] = st.text_input(f"{feature}:", key=f"{tool}_{feature}")
+    
+    # Select tolerance range
+    tolerance_range = st.selectbox("Select Tolerance Range:", list(tolerance_to_numeric_range[tool].keys()), key=f"{tool}_tolerance_range")
+    numeric_tolerance_range = tolerance_to_numeric_range[tool][tolerance_range]
+    tolerance_value = st.number_input(f"Tolerance[mm] (Range: {numeric_tolerance_range}):", key=f"{tool}_tolerance_value", format="%.3f")
+    
+    if not (float(numeric_tolerance_range.split('-')[0]) <= tolerance_value <= float(numeric_tolerance_range.split('-')[1])):
+        st.error(f"Tolerance must be within the range {numeric_tolerance_range}")
+        input_valid = False
+    else:
+        tool_input_data['Tolerance[mm]'] = tolerance_value
+        surface_finish_range = tolerance_to_surface_finish[tool][tolerance_range]
+        st.write(f"Corresponding Surface Finish Range: {surface_finish_range}")
+        surface_finish_value = st.number_input(f"Surface finish[mm] (Range: {surface_finish_range}):", key=f"{tool}_surface_finish_value", format="%.4f")
+        
+        if not (float(surface_finish_range.split('-')[0]) <= surface_finish_value <= float(surface_finish_range.split('-')[1])):
+            st.error(f"Surface finish must be within the range {surface_finish_range}")
+            input_valid = False
+        else:
+            tool_input_data['Surface finish[mm]'] = surface_finish_value
+
+    return tool_input_data if input_valid else None
 
 def main():
     st.title("Machining Operations Prediction")
@@ -167,49 +258,18 @@ def main():
     input_data = {}
     for tool in selected_tools:
         with st.expander(f"Enter the input data for {tool}:"):
-            tool_input_data = {}
-            for feature in tools_info[tool]["input_features"]:
-                if feature == 'Material Type [Aluminimum Alloy - 1]':
-                    tool_input_data[feature] = st.selectbox(f"{feature}:", ['1'], key=f"{tool}_{feature}")
-                elif feature == 'Material Hardness Number[Rockwell]':
-                    tool_input_data[feature] = st.selectbox(f"{feature}:", ['35.45'], key=f"{tool}_{feature}")
-                elif feature == 'Density [Kg/m³]':
-                    tool_input_data[feature] = st.selectbox(f"{feature}:", ['2700'], key=f"{tool}_{feature}")
-                elif feature == 'Poissons Ratio':
-                    tool_input_data[feature] = st.selectbox(f"{feature}:", ['0.26'], key=f"{tool}_{feature}")
-                elif feature not in ['Tolerance[mm]', 'Surface finish[mm]']:
-                    tool_input_data[feature] = st.text_input(f"{feature}:", key=f"{tool}_{feature}")
-            
-            # Select tolerance range
-            tolerance_range = st.selectbox("Select Tolerance Range:", list(tolerance_to_numeric_range[tool].keys()), key=f"{tool}_tolerance_range")
-            numeric_tolerance_range = tolerance_to_numeric_range[tool][tolerance_range]
-            tolerance_value = st.number_input(f"Tolerance[mm] (Range: {numeric_tolerance_range}):", key=f"{tool}_tolerance_value", format="%.3f")
-            
-            if not (float(numeric_tolerance_range.split('-')[0]) <= tolerance_value <= float(numeric_tolerance_range.split('-')[1])):
-                st.error(f"Tolerance must be within the range {numeric_tolerance_range}")
-            else:
-                tool_input_data['Tolerance[mm]'] = tolerance_value
-                surface_finish_range = tolerance_to_surface_finish[tool][tolerance_range]
-                st.write(f"Corresponding Surface Finish Range: {surface_finish_range}")
-                surface_finish_value = st.number_input(f"Surface finish[mm] (Range: {surface_finish_range}):", key=f"{tool}_surface_finish_value", format="%.4f")
-                
-                if not (float(surface_finish_range.split('-')[0]) <= surface_finish_value <= float(surface_finish_range.split('-')[1])):
-                    st.error(f"Surface finish must be within the range {surface_finish_range}")
-                else:
-                    tool_input_data['Surface finish[mm]'] = surface_finish_value
-            
-            input_data[tool] = tool_input_data
+            input_data[tool] = collect_input_data(tool, tools_info[tool]["input_features"])
 
     if st.button("Predict"):
         for tool, tool_input_data in input_data.items():
-            try:
+            if tool_input_data:
                 input_df = pd.DataFrame([tool_input_data])
                 predictions = predict_operation(input_df, loaded_models[tool])
-                st.write(f"Predicted Operations for {tool}:")
-                for i in range(len(predictions[0])):
-                    st.write(f"{tools_info[tool]['output_headings'][i]}: {predictions[0][i]}")
-            except Exception as e:
-                st.write(f"Error predicting for {tool}: {e}")
-                
+                if predictions is not None:
+                    st.write(f"Predicted Operations for {tool}:")
+                    for i in range(len(predictions[0])):
+                        st.write(f"{tools_info[tool]['output_headings'][i]}: {predictions[0][i]}")
+
 if __name__ == "__main__":
     main()
+ 
