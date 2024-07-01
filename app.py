@@ -180,48 +180,48 @@ def collect_input_data(tool, features):
             tool_input_data[feature] = st.selectbox(f"{feature}:", ['0.26'], key=f"{tool}_{feature}")
             
         elif feature == 'Length[mm] {Range : 3 - 30}' and tool == "Boss":
-            value = st.number_input(f"{feature}:", min_value=3.0, max_value=30.0, key=f"{tool}_{feature}")
+            value = st.number_input(f"{feature}:", min_value=3, max_value=30, key=f"{tool}_{feature}")
             tool_input_data[feature] = value
         elif feature == 'Diameter[mm] {Range : 0 - 18}' and tool == "Boss":
-            value = st.number_input(f"{feature}:", min_value=0.0, max_value=18.0, key=f"{tool}_{feature}")
+            value = st.number_input(f"{feature}:", min_value=0, max_value=18, key=f"{tool}_{feature}")
             tool_input_data[feature] = value
             
         elif feature == 'Length[mm]{Range : 6 - 10}' and tool == "Chamfer":
-            value = st.number_input(f"{feature}:", min_value=6.0, max_value=10, key=f"{tool}_{feature}")
+            value = st.number_input(f"{feature}:", min_value=6, max_value=10, key=f"{tool}_{feature}")
             tool_input_data[feature] = value
         elif feature == 'Angle {Range : 25° - 45°}' and tool == "Chamfer":
-            value = st.number_input(f"{feature}:", min_value=25.0, max_value=45.0, key=f"{tool}_{feature}")
+            value = st.number_input(f"{feature}:", min_value=25, max_value=45, key=f"{tool}_{feature}")
             tool_input_data[feature] = value
             
         elif feature == 'Radius[mm]{Range : 0 - 6}' and tool == "Fillet":
-            value = st.number_input(f"{feature}:", min_value=0.0, max_value=6.0, key=f"{tool}_{feature}")
+            value = st.number_input(f"{feature}:", min_value=0, max_value=6, key=f"{tool}_{feature}")
             tool_input_data[feature] = value
             
         elif feature == 'Diameter[mm]{Range : 0 - 10}' and tool == "Hole":
-            value = st.number_input(f"{feature}:", min_value=0.0, max_value=10.0, key=f"{tool}_{feature}")
+            value = st.number_input(f"{feature}:", min_value=0, max_value=10, key=f"{tool}_{feature}")
             tool_input_data[feature] = value
         elif feature == 'Depth[mm]{Range : 0 - 20}' and tool == "Hole":
-            value = st.number_input(f"{feature}:", min_value=0.0, max_value=20.0, key=f"{tool}_{feature}")
+            value = st.number_input(f"{feature}:", min_value=0, max_value=20, key=f"{tool}_{feature}")
             tool_input_data[feature] = value
             
         elif feature == 'Length[mm]{Range : 3 - 80}' and tool == "Pocket":
-            value = st.number_input(f"{feature}:", min_value=3.0, max_value=80.0, key=f"{tool}_{feature}")
+            value = st.number_input(f"{feature}:", min_value=3, max_value=80, key=f"{tool}_{feature}")
             tool_input_data[feature] = value
         elif feature == 'Depth[mm]{Range : 0 - 20}' and tool == "Pocket":
-            value = st.number_input(f"{feature}:", min_value=0.0, max_value=20.0, key=f"{tool}_{feature}")
+            value = st.number_input(f"{feature}:", min_value=0, max_value=20, key=f"{tool}_{feature}")
             tool_input_data[feature] = value
         elif feature == 'Width[mm]{Range : 3 - 80}' and tool == "Pocket":
-            value = st.number_input(f"{feature}:", min_value=3.0, max_value=80.0, key=f"{tool}_{feature}")
+            value = st.number_input(f"{feature}:", min_value=3, max_value=80, key=f"{tool}_{feature}")
             tool_input_data[feature] = value
             
         elif feature == 'Length[mm]{Range : 10 - 100}' and tool == "Step":
-            value = st.number_input(f"{feature}:", min_value=10.0, max_value=100.0, key=f"{tool}_{feature}")
+            value = st.number_input(f"{feature}:", min_value=10, max_value=100, key=f"{tool}_{feature}")
             tool_input_data[feature] = value
         elif feature == 'Depth[mm]{Range : 6 - 10}' and tool == "Step":
-            value = st.number_input(f"{feature}:", min_value=6.0, max_value=10.0, key=f"{tool}_{feature}")
+            value = st.number_input(f"{feature}:", min_value=6, max_value=10, key=f"{tool}_{feature}")
             tool_input_data[feature] = value
         elif feature == 'Width[mm]{Range : 10 - 100}' and tool == "Step":
-            value = st.number_input(f"{feature}:", min_value=10.0, max_value=100.0, key=f"{tool}_{feature}")
+            value = st.number_input(f"{feature}:", min_value=10, max_value=100, key=f"{tool}_{feature}")
             tool_input_data[feature] = value
             
         elif feature not in ['Tolerance[mm]', 'Surface finish[mm]']:
@@ -272,4 +272,3 @@ def main():
 
 if __name__ == "__main__":
     main()
- 
