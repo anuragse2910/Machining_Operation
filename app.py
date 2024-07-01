@@ -206,8 +206,8 @@ def main():
                 input_df = pd.DataFrame([tool_input_data])
                 predictions = predict_operation(input_df, loaded_models[tool])
                 st.write(f"Predicted Operations for {tool}:")
-                for i, heading in enumerate(tools_info[tool]["output_headings"]):
-                    st.write(f"{heading}: {predictions[0][i]}")
+                for i in range(len(predictions[0])):
+                    st.write(f"{tools_info[tool]['output_headings'][i]}: {predictions[0][i]}")
             except Exception as e:
                 st.write(f"Error predicting for {tool}: {e}")
                 
